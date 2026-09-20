@@ -49,8 +49,9 @@ manim -pql main.py PruebaListaSimple
 
 ## Producción del documental
 
-La clase `ListaEnlazadaDocumental` encadena créditos, las ocho escenas
-educativas y el cierre en un único vídeo. No modifica las escenas individuales:
+La clase `ListaEnlazadaDocumental` encadena créditos, la introducción
+conceptual, las ocho escenas educativas y el cierre en un único vídeo. No
+modifica las escenas individuales:
 las ejecuta sobre un mismo lienzo y realiza un fundido entre secciones.
 
 ```text
@@ -71,9 +72,9 @@ ffmpeg -version
 
 ### 1. Generar o revisar el guion IA
 
-El guion de producción es [audio/guion_final_v2.md](audio/guion_final_v2.md).
-Cada bloque incluye lo que se ve, duración prevista y una narración asociada a
-una de las ocho escenas. Si se desea una variante con Ollama, el optimizador
+El guion de producción es [audio/guion_final_v3.md](audio/guion_final_v3.md).
+Cada bloque incluye VISUAL, NARRACIÓN y DURACIÓN, con una narración asociada a
+la introducción conceptual o a una de las ocho escenas educativas. Si se desea una variante con Ollama, el optimizador
 sigue disponible y puede recibir el guion explícitamente:
 
 ```powershell
@@ -90,7 +91,7 @@ guion; no se acelera la locución para encajarla en el video.
 python audio/generar_audio.py --overwrite
 ```
 
-Se generan `intro.mp3`, `referencias.mp3` y las demás pistas en `audio/`.
+Se generan `concepto.mp3`, `intro.mp3`, `referencias.mp3` y las demás pistas en `audio/`.
 `ListaEnlazadaDocumental` incorpora cada archivo al inicio de su escena y, si
 la voz dura más que la animación, conserva el último plano hasta terminarla.
 
@@ -129,7 +130,7 @@ Use `-pql` en lugar de `-pqh` para comprobar el montaje rápidamente.
 
 ## Pipeline automático de narración
 
-El pipeline conserva las ocho pistas separadas para que Manim sincronice cada
+El pipeline conserva las nueve pistas separadas para que Manim sincronice cada
 una al inicio de su escena. Los scripts no modifican nodos, listas ni escenas.
 
 ### Dependencias de voz
@@ -200,7 +201,7 @@ variables manualmente.
 
 ### Flujo final
 
-1. Revise `audio/guion_final_v2.md`. Si necesita una alternativa producida por
+1. Revise `audio/guion_final_v3.md`. Si necesita una alternativa producida por
    Ollama, el script valida que el servicio, la variable `OLLAMA_MODEL` y el
    modelo estén disponibles; crea `audio/guion_optimizado.md`.
 
@@ -208,7 +209,7 @@ variables manualmente.
    python audio/generar_guion_ia.py
    ```
 
-2. Genere las ocho pistas MP3. La voz por defecto es `es-MX-JorgeNeural`, con
+2. Genere las nueve pistas MP3. La voz por defecto es `es-MX-JorgeNeural`, con
    ritmo natural y pausas guiadas por el texto.
 
    ```powershell

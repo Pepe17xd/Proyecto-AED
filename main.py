@@ -8,6 +8,7 @@ from escenas.insercion import InsercionAlInicio as _InsercionAlInicio
 from escenas.recorrido import RecorridoDeLista as _RecorridoDeLista
 from escenas.prueba_lista_simple import PruebaListaSimple as _PruebaListaSimple
 from escenas.introduccion_lista import IntroduccionLista as _IntroduccionLista
+from escenas.introduccion_concepto import IntroduccionConcepto as _IntroduccionConcepto
 from escenas.insercion_lista import InsercionEnLista as _InsercionEnLista
 from escenas.eliminacion_lista import EliminacionEnLista as _EliminacionEnLista
 from escenas.referencias_lista import ReferenciasLista as _ReferenciasLista
@@ -37,6 +38,10 @@ class PruebaListaSimple(_PruebaListaSimple):
 
 
 class IntroduccionLista(_IntroduccionLista):
+    pass
+
+
+class IntroduccionConcepto(_IntroduccionConcepto):
     pass
 
 
@@ -79,6 +84,7 @@ __all__ = [
     "RecorridoDeLista",
     "PruebaListaSimple",
     "IntroduccionLista",
+    "IntroduccionConcepto",
     "InsercionEnLista",
     "EliminacionEnLista",
     "ReferenciasLista",

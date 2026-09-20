@@ -18,6 +18,7 @@ load_dotenv(RAIZ_PROYECTO / ".env", override=False)
 NARRACION_ACTIVA = os.getenv("MANIM_NARRACION", "0") == "1"
 
 ARCHIVOS_NARRACION = (
+    "concepto.mp3",
     "intro.mp3",
     "referencias.mp3",
     "insercion.mp3",

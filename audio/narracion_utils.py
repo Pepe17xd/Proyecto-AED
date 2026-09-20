@@ -9,13 +9,19 @@ from pathlib import Path
 DIRECTORIO_AUDIO = Path(__file__).resolve().parent
 GUION_FINAL = DIRECTORIO_AUDIO / "guion_final.md"
 GUION_FINAL_V2 = DIRECTORIO_AUDIO / "guion_final_v2.md"
+GUION_FINAL_V3 = DIRECTORIO_AUDIO / "guion_final_v3.md"
 GUION_OPTIMIZADO = DIRECTORIO_AUDIO / "guion_optimizado.md"
 
 PATRON_SECCION = re.compile(r"^##\s+([^\s]+\.mp3)\s+—\s+.*$", re.MULTILINE)
 PATRON_ESCENA_V2 = re.compile(r"^##\s+([A-Za-z][\w]+)\s*$", re.MULTILINE)
 PATRON_NARRACION_V2 = re.compile(r"\[Narraci[oó]n\]\s*\n(.+?)(?=\n\[|\Z)", re.DOTALL | re.IGNORECASE)
+PATRON_NARRACION_V3 = re.compile(
+    r"^NARRACI[oÓ]N:\s*\n?(.*?)(?=^DURACI[oÓ]N:|^##\s+|\Z)",
+    re.DOTALL | re.IGNORECASE | re.MULTILINE,
+)
 
 ARCHIVO_POR_ESCENA = {
+    "IntroduccionConcepto": "concepto.mp3",
     "IntroduccionLista": "intro.mp3",
     "ReferenciasLista": "referencias.mp3",
     "InsercionEnLista": "insercion.mp3",
@@ -37,7 +43,7 @@ def extraer_secciones(ruta: Path) -> list[tuple[str, str]]:
         for indice, escena in enumerate(escenas):
             fin = escenas[indice + 1].start() if indice + 1 < len(escenas) else len(contenido)
             bloque = contenido[escena.end() : fin]
-            narracion = PATRON_NARRACION_V2.search(bloque)
+            narracion = PATRON_NARRACION_V3.search(bloque) or PATRON_NARRACION_V2.search(bloque)
             archivo = ARCHIVO_POR_ESCENA.get(escena.group(1))
             if archivo and narracion:
                 texto = " ".join(narracion.group(1).split())

@@ -15,6 +15,7 @@ from escenas.desventajas_lista import DesventajasLista
 from escenas.eliminacion_lista import EliminacionEnLista
 from escenas.insercion_lista import InsercionEnLista
 from escenas.introduccion_lista import IntroduccionLista
+from escenas.introduccion_concepto import IntroduccionConcepto
 from escenas.referencias_lista import ReferenciasLista
 from escenas.variantes_lista import VariantesLista
 from escenas.ventajas_lista import VentajasLista
@@ -28,6 +29,7 @@ class ListaEnlazadaDocumental(EscenaListaEnlazada):
     """
 
     SECCIONES = (
+        (IntroduccionConcepto, "concepto.mp3"),
         (IntroduccionLista, "intro.mp3"),
         (ReferenciasLista, "referencias.mp3"),
         (InsercionEnLista, "insercion.mp3"),
