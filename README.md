@@ -1,4 +1,4 @@
-# Documental visual de listas enlazadas con Manim e IA
+# Listas enlazadas con Manim e IA
 
 Proyecto educativo que explica cómo se conectan los datos en memoria mediante
 un documental animado. La narración parte del problema de almacenar y
