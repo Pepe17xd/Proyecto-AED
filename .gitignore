@@ -1,0 +1,14 @@
+# Entorno local
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Render y postproducción generados
+media/
+video_final_listas_enlazadas.mp4
+
+# Audio generado/local (los guiones y README sí se versionan)
+*.mp3
+audio/guion_optimizado.md

@@ -1,0 +1,1 @@
+"""Escenas de la lección."""
