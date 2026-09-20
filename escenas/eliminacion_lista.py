@@ -3,6 +3,7 @@
 from manim import Create, DOWN, FadeOut, GREEN, Indicate, RED, SurroundingRectangle, Text, UP, Write
 
 from escenas.base import EscenaListaEnlazada
+from config.estilo import COLOR_NODO_ELIMINADO
 from estructuras.lista_enlazada_visual import ListaEnlazadaVisual
 
 
@@ -22,6 +23,7 @@ class EliminacionEnLista(EscenaListaEnlazada):
         objetivo = Text("Eliminar nodo 20", font_size=28, color=RED).to_edge(UP)
         objetivo.shift(DOWN * 1.05)
         nodo_eliminado = lista.nodos[2]
+        nodo_eliminado.set_stroke(COLOR_NODO_ELIMINADO)
         self.play(Write(objetivo), Indicate(nodo_eliminado, color=RED, scale_factor=1.12))
 
         # Se enfatiza el tramo cuya referencia será reescrita antes de usar la

@@ -3,6 +3,7 @@
 from manim import Create, DOWN, FadeOut, GREEN, Indicate, SurroundingRectangle, Text, UP, Write
 
 from escenas.base import EscenaListaEnlazada
+from config.estilo import COLOR_NODO_NUEVO
 from estructuras.lista_enlazada_visual import ListaEnlazadaVisual
 
 
@@ -25,7 +26,10 @@ class InsercionEnLista(EscenaListaEnlazada):
 
         # `insertar` crea el nodo, sustituye 10 → 20 por 10 → 15 → 20
         # y redistribuye la lista de forma automática.
-        self.play(lista.insertar(15, 2))
+        animacion_insercion = lista.insertar(15, 2)
+        # El nodo ya existe lógicamente antes de reproducir la animación.
+        lista.nodos[1].set_stroke(COLOR_NODO_NUEVO)
+        self.play(animacion_insercion)
         self.play(FadeOut(instruccion))
 
         resultado = Text("10  →  15  →  20  →  30", font_size=28, color=GREEN)

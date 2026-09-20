@@ -10,12 +10,12 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from narracion_utils import DIRECTORIO_AUDIO, GUION_FINAL, GUION_OPTIMIZADO, extraer_secciones
+from narracion_utils import DIRECTORIO_AUDIO, GUION_FINAL_V2, extraer_secciones
 
 
 load_dotenv(DIRECTORIO_AUDIO.parent / ".env", override=False)
 VOZ_POR_DEFECTO = os.getenv("TTS_VOICE", "es-MX-JorgeNeural")
-VELOCIDAD_POR_DEFECTO = os.getenv("TTS_RATE", "-8%")
+VELOCIDAD_POR_DEFECTO = os.getenv("TTS_RATE", "-2%")
 TONO_POR_DEFECTO = os.getenv("TTS_PITCH", "+0Hz")
 
 
@@ -32,14 +32,17 @@ def argumentos() -> argparse.Namespace:
     parser.add_argument("--voice", default=VOZ_POR_DEFECTO, help="Voz Edge TTS, p. ej. es-MX-JorgeNeural.")
     parser.add_argument("--rate", default=VELOCIDAD_POR_DEFECTO, help="Velocidad Edge TTS, p. ej. -8%%.")
     parser.add_argument("--pitch", default=TONO_POR_DEFECTO, help="Tono Edge TTS, p. ej. +0Hz.")
-    parser.add_argument("--guion", type=Path, help="Guion Markdown; por defecto prefiere el optimizado.")
+    parser.add_argument("--guion", type=Path, help="Guion Markdown; por defecto usa guion_final_v2.md.")
     parser.add_argument("--overwrite", action="store_true", help="Reemplaza MP3 existentes.")
     return parser.parse_args()
 
 
 def main() -> int:
     args = argumentos()
-    guion = args.guion or (GUION_OPTIMIZADO if GUION_OPTIMIZADO.exists() else GUION_FINAL)
+    guion = args.guion or GUION_FINAL_V2
+    if not guion.is_file():
+        print(f"No existe el guion: {guion}", file=sys.stderr)
+        return 1
     try:
         import edge_tts  # noqa: F401
     except ImportError:

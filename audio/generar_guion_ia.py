@@ -10,14 +10,14 @@ from urllib.request import Request, urlopen
 
 from dotenv import load_dotenv
 
-from narracion_utils import GUION_FINAL, GUION_OPTIMIZADO, extraer_secciones, escribir_secciones
+from narracion_utils import GUION_FINAL_V2, GUION_OPTIMIZADO, extraer_secciones, escribir_secciones
 
 
 # ``override=False`` preserva valores configurados por el sistema o la sesión.
-load_dotenv(GUION_FINAL.parent.parent / ".env", override=False)
+load_dotenv(GUION_FINAL_V2.parent.parent / ".env", override=False)
 URL_OLLAMA = os.getenv("OLLAMA_URL", "http://localhost:11434")
 MODELO_OLLAMA = os.getenv("OLLAMA_MODEL", "").strip()
-ARCHIVO_PROMPT = GUION_FINAL.parent / "prompts_narracion.md"
+ARCHIVO_PROMPT = GUION_FINAL_V2.parent / "prompts_narracion.md"
 
 
 def obtener_modelo() -> str:
@@ -92,7 +92,7 @@ def optimizar_guion(texto: str) -> str:
 def main() -> int:
     try:
         verificar_modelo(obtener_modelo())
-        optimizadas = [(archivo, optimizar_guion(texto)) for archivo, texto in extraer_secciones(GUION_FINAL)]
+        optimizadas = [(archivo, optimizar_guion(texto)) for archivo, texto in extraer_secciones(GUION_FINAL_V2)]
         escribir_secciones(GUION_OPTIMIZADO, optimizadas, "Guion optimizado para narración")
     except (OSError, ValueError, RuntimeError) as error:
         print(f"Error: {error}", file=sys.stderr)

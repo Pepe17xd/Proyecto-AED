@@ -69,7 +69,32 @@ python -m pip install -r requirements.txt
 ffmpeg -version
 ```
 
-### 1. Vídeo completo sin audio
+### 1. Generar o revisar el guion IA
+
+El guion de producción es [audio/guion_final_v2.md](audio/guion_final_v2.md).
+Cada bloque incluye lo que se ve, duración prevista y una narración asociada a
+una de las ocho escenas. Si se desea una variante con Ollama, el optimizador
+sigue disponible y puede recibir el guion explícitamente:
+
+```powershell
+python audio/generar_guion_ia.py
+```
+
+### 2. Generar audio por escena
+
+La voz predeterminada es `es-MX-JorgeNeural` a velocidad natural (`-2%`). Las
+pausas están incorporadas mediante la puntuación y los cambios de idea del
+guion; no se acelera la locución para encajarla en el video.
+
+```powershell
+python audio/generar_audio.py --overwrite
+```
+
+Se generan `intro.mp3`, `referencias.mp3` y las demás pistas en `audio/`.
+`ListaEnlazadaDocumental` incorpora cada archivo al inicio de su escena y, si
+la voz dura más que la animación, conserva el último plano hasta terminarla.
+
+### 3. Vídeo completo sin audio
 
 La narración está desactivada por defecto:
 
@@ -78,21 +103,19 @@ $env:MANIM_NARRACION="0"
 manim -pqh main.py ListaEnlazadaDocumental
 ```
 
-### 2. Vídeo con narración
+### 4. Vídeo con narración sincronizada
 
-Grabe las pistas indicadas en [audio/README.md](audio/README.md), siguiendo
-[audio/guion_final.md](audio/guion_final.md). Después active la
-narración antes de renderizar:
+Después de generar las pistas, active la narración antes de renderizar:
 
 ```powershell
 $env:MANIM_NARRACION="1"
 manim -pqh main.py ListaEnlazadaDocumental
 ```
 
-Cada pista se inicia al comienzo de su sección. Recórtela para que no exceda
-la duración de esa sección y no se superponga con la siguiente.
+Cada pista se inicia al comienzo de su sección. No se usa
+`narracion_completa.mp3` durante el render: esto evita desfases acumulados.
 
-### 3. Narración y música ambiental
+### 5. Narración y música ambiental
 
 Con el vídeo narrado generado y una pista libre de derechos en
 `audio/musica_ambiental.mp3`, mezcle la música a volumen bajo (12 %) con FFmpeg
@@ -177,20 +200,20 @@ variables manualmente.
 
 ### Flujo final
 
-1. Optimice el guion con Ollama local. El script valida que el servicio, la
-   variable `OLLAMA_MODEL` y el modelo estén disponibles; crea
-   `audio/guion_optimizado.md`.
+1. Revise `audio/guion_final_v2.md`. Si necesita una alternativa producida por
+   Ollama, el script valida que el servicio, la variable `OLLAMA_MODEL` y el
+   modelo estén disponibles; crea `audio/guion_optimizado.md`.
 
    ```powershell
    python audio/generar_guion_ia.py
    ```
 
 2. Genere las ocho pistas MP3. La voz por defecto es `es-MX-JorgeNeural`, con
-   ritmo moderado; puede cambiarla por `es-PE-AlexNeural` si está disponible.
+   ritmo natural y pausas guiadas por el texto.
 
    ```powershell
-   python audio/generar_audio.py
-   python audio/generar_audio.py --voice es-PE-AlexNeural --overwrite
+   python audio/generar_audio.py --overwrite
+   python audio/generar_audio.py --voice es-MX-JorgeNeural --rate -2% --overwrite
    ```
 
 3. Renderice el documental con las pistas generadas.

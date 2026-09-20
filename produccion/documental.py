@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from types import MethodType
 
-from manim import FadeOut, Group
+from manim import FadeOut, Group, config
 
 from config.produccion import DIRECTORIO_AUDIO, NARRACION_ACTIVA
 from escenas.aplicaciones_lista import AplicacionesLista
@@ -38,30 +38,39 @@ class ListaEnlazadaDocumental(EscenaListaEnlazada):
         (AplicacionesLista, "aplicaciones.mp3"),
     )
 
+    def setup(self):
+        """Prepara una línea de tiempo reproducible cuando hay narración.
+
+        ``Scene.add_sound`` no registra sonido mientras el renderer reutiliza
+        una animación desde caché. Como cada pista depende del instante actual
+        de esta escena, un render narrado debe ejecutar todas las animaciones
+        y no puede reutilizar fragmentos de vídeo.
+        """
+        if NARRACION_ACTIVA:
+            config.disable_caching = True
+        super().setup()
+
     def construct(self):
 
-        if NARRACION_ACTIVA:
-            self.add_sound(
-                str(DIRECTORIO_AUDIO / "narracion_completa.mp3")
-            )
-
         CreditosDocumental.construct(self)
+
         self._transicion()
 
         for escena, archivo_audio in self.SECCIONES:
-            self._ejecutar_escena(escena)
+            self._ejecutar_escena(
+                escena,
+                archivo_audio
+            )
+
             self._transicion()
 
         CierreDocumental.construct(self)
 
     def _agregar_narracion(self, nombre_archivo: str) -> None:
-            ruta = DIRECTORIO_AUDIO / nombre_archivo
-            print("Audio:", ruta)
-            print("Existe:", ruta.exists())
-            print("Narración activa:", NARRACION_ACTIVA)
-
-            if NARRACION_ACTIVA and ruta.is_file():
-                self.add_sound(str(ruta))
+        """Inserta la pista de su escena en el instante visual actual."""
+        ruta = DIRECTORIO_AUDIO / nombre_archivo
+        if NARRACION_ACTIVA and ruta.is_file():
+            self.add_sound(str(ruta))
 
     def _transicion(self) -> None:
         """Fundido suave y limpieza explícita entre dos escenas independientes."""
@@ -70,32 +79,68 @@ class ListaEnlazadaDocumental(EscenaListaEnlazada):
         self.clear()
         self.wait(0.15)
 
-    def _ejecutar_escena(self, clase_escena) -> None:
-        """Ejecuta una escena existente conservando sus auxiliares privados.
+    def _ejecutar_escena(self, clase_escena, archivo_audio: str) -> None:
+        """Ejecuta una sección con su narración sincronizada."""
 
-        Las escenas se mantienen independientes y algunas declaran helpers
-        estáticos para construir arreglos o listas. Se montan solo durante esa
-        sección sobre esta instancia de producción y luego se restauran.
-        """
         restauraciones = []
+
         for nombre, descriptor in vars(clase_escena).items():
             if not nombre.startswith("_") or nombre.startswith("__"):
                 continue
+
             anterior = getattr(self, nombre, None)
             existia = hasattr(self, nombre)
+
             restauraciones.append((nombre, existia, anterior))
+
             if isinstance(descriptor, staticmethod):
                 setattr(self, nombre, descriptor.__func__)
+
             elif isinstance(descriptor, classmethod):
-                setattr(self, nombre, descriptor.__get__(clase_escena, clase_escena))
+                setattr(
+                    self,
+                    nombre,
+                    descriptor.__get__(clase_escena, clase_escena)
+                )
+
             elif callable(descriptor):
-                setattr(self, nombre, MethodType(descriptor, self))
+                setattr(
+                    self,
+                    nombre,
+                    MethodType(descriptor, self)
+                )
 
         try:
+            inicio_narracion = self.time
+            self._agregar_narracion(archivo_audio)
+
             clase_escena.construct(self)
+
+            # Mantiene el último plano únicamente el tiempo que falte para
+            # terminar la pista; no introduce un porcentaje arbitrario ni
+            # desplaza el inicio de la siguiente sección.
+            duracion_audio = self._duracion_audio(
+                DIRECTORIO_AUDIO / archivo_audio
+            )
+            restante = max(0.0, duracion_audio - (self.time - inicio_narracion))
+            if restante:
+                self.wait(restante)
+
         finally:
             for nombre, existia, anterior in reversed(restauraciones):
                 if existia:
                     setattr(self, nombre, anterior)
                 else:
                     delattr(self, nombre)
+
+    @staticmethod
+    def _duracion_audio(ruta) -> float:
+        """Lee duración MP3 con PyAV, incluido con Manim, sin depender de ffprobe."""
+        if not ruta.is_file():
+            return 0.0
+        try:
+            import av
+            with av.open(str(ruta)) as contenedor:
+                return float(contenedor.duration / av.time_base) if contenedor.duration else 0.0
+        except (OSError, ImportError, ValueError):
+            return 0.0
