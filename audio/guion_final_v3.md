@@ -8,15 +8,19 @@ puntuación para que edge-tts mantenga un ritmo natural; la voz no se acelera.
 VISUAL:
 Se presenta el título «Listas Enlazadas», el subtítulo y un índice breve del
 documental. Después aparece la pregunta «¿Por qué necesitamos listas
-enlazadas?». Cuatro bloques muestran 10, 20, 30 y 40 como datos contiguos.
-Se marca la dificultad de insertar o reorganizar elementos. Los bloques se
-transforman en tres nodos [10|next] → [20|next] → [30|null], y se resaltan el
-dato y la referencia.
+enlazadas?». Se muestra un arreglo de 100 000 elementos (representado con
+seis celdas y una elipsis). Se pide insertar un dato al inicio: aparece la
+celda nueva y, al insertarla, todo el arreglo se desplaza una posición
+(las celdas se resaltan en naranja). Después se presenta la misma operación
+con una lista enlazada: tres nodos 10 → 20 → 30. Se crea un nuevo nodo 5 a
+la izquierda y solo se dibuja una flecha verde hacia el 10; ningún otro nodo
+se mueve. Se cierra resaltando que cada nodo guarda un dato y una referencia
+al siguiente.
 
 NARRACIÓN:
-Antes de hablar de nodos, pensemos en un problema. Podemos guardar datos juntos, como estas celdas. Pero insertar o reorganizar un elemento puede obligarnos a mover muchos bloques. ¿Y si cada elemento pudiera encontrar al siguiente? Así aparecen los nodos: cada uno guarda un dato y una referencia. La referencia señala al siguiente. Después veremos cómo recorrer, insertar y eliminar sin perder la conexión.
+Antes de hablar de nodos, pensemos en un problema real. Imagina un arreglo con cien mil elementos guardados uno junto a otro en memoria. Si queremos insertar un nuevo dato al inicio, cada uno de esos cien mil elementos debe desplazarse una posición. Ahora veamos la misma operación con una lista enlazada. Aquí cada elemento no vive pegado al siguiente: solo guarda una referencia hacia él. Para insertar el nuevo dato no movemos nada; simplemente creamos el nodo y agregamos una referencia. Así aparecen los nodos: cada uno guarda un dato y una conexión al siguiente. Ahora veamos la estructura de una lista enlazada, paso a paso.
 
-DURACIÓN: 24–28 segundos.
+DURACIÓN: 34–40 segundos.
 
 ## IntroduccionLista
 
